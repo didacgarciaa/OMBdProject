@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMDb Project</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script.js" defer></script>
+</head>
+<body>
+    <form>
+        <fieldset>
+            <legend>Selecciona un Mètode</legend>
+            <label>
+                <input type="radio" id="cbXHR" name="method"> XHR
+            </label><br>
+            <label>
+                <input type="radio" id="cbFetchAPI" name="method"> FetchAPI
+            </label><br>
+            <label>
+                <input type="radio" id="cbWebSockets" name="method"> WebSockets
+            </label>
+        </fieldset>
+    </form>    
+    <form id="search-by-title-form">
+        <fieldset>
+            <legend>Buscar Pel·lícula per Títol</legend>
+            <label id="lbTitle1">Title 1:</label>
+            <input type="text" id="t1" name="t1" required>
+            <label id="lbTitle2" style="display: none;">Title 2:</label>
+            <input type="text" id="t2" name="t2" required style="display: none;">
+            <label id="lbTitle3" style="display: none;">Title 3:</label>
+            <input type="text" id="t3" name="t3" required style="display: none;">
+            <button id="search-by-title-button" type="button">Search</button>
+        </fieldset>
+        
+    </form>
+    <div id="search-results">
+        <h3>Results:</h3>
+        <pre id="response-output1"></pre>
+        <pre id="response-output2"></pre>
+        <pre id="response-output3"></pre>
+
+    </div>
+</body>
+</html>

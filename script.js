@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsContainer = document.getElementById("search-results");
     const outputContainer1 = document.getElementById("response-output1");
     const outputContainer2 = document.getElementById("response-output2");
-    const outputContainer3= document.getElementById("response-output3");
+    const outputContainer3 = document.getElementById("response-output3");
+    const movieImage = document.getElementById("movieImage");
+    const movieText = document.getElementById("movieText");
     const label2 = document.getElementById("lbTitle2");
     const label3 = document.getElementById("lbTitle3");
     const title1 = document.getElementById("t1");
@@ -76,8 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const apiKey = "d08ce4be";
         const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
 
-        outputContainer1.textContent = "Loading...";
-        resultsContainer.style.display = "block";
+        outputContainer1.style.visibility = "visible";
 
         try {
             const response = await fetch(apiUrl);
@@ -89,7 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (data.Response === "True") {
-                outputContainer1.textContent = JSON.stringify(data, null, 2);
+                movieImage.setAttribute("src", data.Poster);
+                movieText.textContent = `${data.Title} - ${data.Year}`;
                 addPeliculaToArray(data);
             } else {
                 outputContainer1.textContent = `Error: ${data.Error}`;
@@ -99,21 +101,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+
     function xhrQuery(title) {
         const apiKey = "d08ce4be";
         const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
-
-        outputContainer1.textContent = "Loading...";
-        resultsContainer.style.display = "block";
-
+    
+        outputContainer1.style.visibility = "visible";
+    
         const xhr = new XMLHttpRequest();
         xhr.open("GET", apiUrl, true);
-
+    
         xhr.onload = function () {
             if (xhr.status === 200) {
                 const data = JSON.parse(xhr.responseText);
                 if (data.Response === "True") {
-                    outputContainer1.textContent = JSON.stringify(data, null, 2);
+                    // Fetch the poster image as a binary blob
+                    fetchPosterImage(data.Poster, function (blobUrl) {
+                        movieImage.setAttribute("src", blobUrl);
+                    });
+    
+                    movieText.textContent = `${data.Title} - ${data.Year}`;
                     addPeliculaToArray(data);
                 } else {
                     outputContainer1.textContent = `Error: ${data.Error}`;
@@ -122,17 +129,41 @@ document.addEventListener("DOMContentLoaded", () => {
                 outputContainer1.textContent = "Error: Failed to fetch data.";
             }
         };
-
+    
         xhr.onerror = function () {
             outputContainer1.textContent = "Error: Network issue.";
         };
-
+    
         xhr.send();
     }
     
-    async function fetchMultipleQueries(titles) {
-        const apiKey = "d08ce4be"; 
+    function fetchPosterImage(url, callback) {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", url, true);
+        xhr.responseType = "blob"; // Set response type to blob for binary data
     
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Convert blob to a URL and pass it to the callback
+                const blobUrl = URL.createObjectURL(xhr.response);
+                callback(blobUrl);
+            } else {
+                console.error("Error fetching the poster image.");
+                callback(""); // Provide an empty fallback
+            }
+        };
+    
+        xhr.onerror = function () {
+            console.error("Network error while fetching the poster image.");
+            callback("");
+        };
+    
+        xhr.send();
+    }
+
+    async function fetchMultipleQueries(titles) {
+        const apiKey = "d08ce4be";
+
         const promises = titles.map((title) => {
             const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
             return fetch(apiUrl).then((response) => {
@@ -142,13 +173,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 return response.json();
             });
         });
-    
+
         try {
-            const results = await Promise.all(promises); 
-            let arrayContainer = [outputContainer1,outputContainer2,outputContainer3];
+            const results = await Promise.all(promises);
+            let arrayContainer = [outputContainer1, outputContainer2, outputContainer3];
+            outputContainer1.style.visibility = "visible";
+            outputContainer2.style.visibility = "visible";
+            outputContainer3.style.visibility = "visible";
+
             results.forEach((data, index) => {
                 if (data.Response === "True") {
-                    arrayContainer[index].textContent = `Result for ${titles[index]}: ${JSON.stringify(data, null, 2)}`;
+                    const movieFoundDiv = arrayContainer[index].querySelector(".movieFound");
+
+                    const movieImage = document.createElement("img");
+                    movieImage.setAttribute("src", data.Poster);
+                    movieImage.setAttribute("alt", `${data.Title} Poster`);
+
+                    const textElement = document.createElement("p");
+                    textElement.textContent = `${data.Title} - ${data.Year}`;
+
+                    movieFoundDiv.innerHTML = '';
+                    movieFoundDiv.appendChild(movieImage);
+                    movieFoundDiv.appendChild(textElement);
+                    resultsContainer.style.display = "flex";
                     addPeliculaToArray(data);
                 } else {
                     console.log(`Error for ${titles[index]}: ${data.Error}`);
@@ -158,22 +205,41 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("An error occurred while fetching multiple queries:", error);
         }
     }
-    
+
+
     function fetchMultipleQueriesXHR(titles) {
         const apiKey = "d08ce4be";
-        let arrayContainer = [outputContainer1,outputContainer2,outputContainer3];
-        titles.forEach((title,index) => {
+        let arrayContainer = [outputContainer1, outputContainer2, outputContainer3];
+        outputContainer1.style.visibility = "visible";
+        outputContainer2.style.visibility = "visible";
+        outputContainer3.style.visibility = "visible";
+        titles.forEach((title, index) => {
             const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
             const xhr = new XMLHttpRequest();
             xhr.open("GET", apiUrl, true);
-            xhr.responseType = "json"; 
+            xhr.responseType = "json";
     
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     const data = xhr.response;
                     if (data.Response === "True") {
-                        arrayContainer[index].textContent = `Result for ${titles[index]}: ${JSON.stringify(data, null, 2)}`;
-                        addPeliculaToArray(data);
+                        const movieFoundDiv = arrayContainer[index].querySelector(".movieFound");
+    
+                        // Fetch the poster image as a binary blob
+                        fetchPosterImage(data.Poster, function (blobUrl) {
+                            const movieImage = document.createElement("img");
+                            movieImage.setAttribute("src", blobUrl);
+                            movieImage.setAttribute("alt", `${data.Title} Poster`);
+    
+                            const textElement = document.createElement("p");
+                            textElement.textContent = `${data.Title} - ${data.Year}`;
+    
+                            movieFoundDiv.innerHTML = '';
+                            movieFoundDiv.appendChild(movieImage);
+                            movieFoundDiv.appendChild(textElement);
+                            resultsContainer.style.display = "flex";
+                            addPeliculaToArray(data);
+                        });
                     } else {
                         console.log(`Error for ${title}: ${data.Error}`);
                     }
@@ -189,61 +255,16 @@ document.addEventListener("DOMContentLoaded", () => {
             xhr.send();
         });
     }
-    
-    function fetchPosterImage(title) {
-        const apiKey = "d08ce4be";
-        const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
-    
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", apiUrl, true);
-    
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                const data = JSON.parse(xhr.responseText);
-                if (data.Response === "True" && data.Poster) {
-                    const imageUrl = data.Poster;
-    
-                    const imageXHR = new XMLHttpRequest();
-                    imageXHR.open("GET", imageUrl, true);
-                    imageXHR.responseType = "blob"; 
-    
-                    imageXHR.onload = function () {
-                        if (imageXHR.status === 200) {
-                            const blob = imageXHR.response;
-                            const imgURL = URL.createObjectURL(blob);
-                            const imgElement = document.createElement("img");
-                            imgElement.src = imgURL;
-                            document.body.appendChild(imgElement); 
-                        }
-                    };
-    
-                    imageXHR.onerror = function () {
-                        console.error(`Error fetching poster for ${title}`);
-                    };
-    
-                    imageXHR.send();
-                } else {
-                    console.log(`Error for ${title}: ${data.Error}`);
-                }
-            } else {
-                console.log(`Error fetching ${title}`);
-            }
-        };
-    
-        xhr.onerror = function () {
-            console.error("Error fetching movie data");
-        };
-    
-        xhr.send();
-    }
 
-    function addPeliculaToArray(data) {
-        let pelicula = new Pelicula(data.imdbID,data.Title,data.Runtime,data.Year,data.Genre,data.Director, data.Plot, data.Country,data.imbdRating);
-        
-        if(!arrayPelicules.find(peliArray => peliArray.id === pelicula.id)){
+   function addPeliculaToArray(data) {
+        let pelicula = new Pelicula(data.imdbID, data.Title, data.Runtime, data.Year, data.Genre, data.Director, data.Plot, data.Country, data.imbdRating);
+
+        if (!arrayPelicules.find(peliArray => peliArray.id === pelicula.id)) {
             arrayPelicules.push(pelicula);
-            console.log(pelicula.toString());
+            console.log(pelicula)
         }
     }
-    
+
+
+
 });

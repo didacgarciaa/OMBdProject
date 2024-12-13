@@ -1,0 +1,116 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Form Styles */
+form {
+    background-color: white;
+    padding: 15px; /* Reduced padding for the form */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+}
+
+/* Fieldset Styles */
+fieldset {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px; /* Reduced padding for the fieldset */
+}
+
+/* Legend Styles */
+legend {
+    font-weight: bold;
+    font-size: 1em; /* Reduced font size for the legend */
+}
+
+/* Label and Input Styles */
+label {
+    font-size: 0.8em; /* Slightly smaller font size */
+}
+
+
+
+
+button {
+    padding: 4px 8px; /* Reduced padding for a smaller button */
+    font-size: 0.8em; /* Reduced font size for the button */
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+
+
+
+
+#search-results {
+    display: block;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 30px;
+}
+
+#response-output1,
+#response-output2,
+#response-output3 {
+    visibility:hidden;
+    display: flex; /* Hidden initially until a result is found */
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px; /* Add some space between the movie entries */
+}
+
+.movieFound {
+
+    background-color: #fff; /* White background */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    width: 130px; /* Set a fixed width */
+    height: 275px;
+    padding: 15px; /* Space around content */
+    text-align: center; /* Center text */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s, box-shadow 0.3s ease-in-out; /* Smooth transitions */
+}
+
+.movieFound img {
+    width: 100%; /* Make image responsive within its container */
+    max-width: 250px; /* Limit the image size */
+    border-radius: 8px; /* Rounded corners for image */
+    object-fit: cover; /* Ensure the image covers the area without distorting */
+    margin-bottom: 15px; /* Space between image and text */
+}
+
+.movieFound p {
+    font-size: 0.9rem; /* Set text size */
+    color: #333; /* Dark text color for better readability */
+    font-weight: bold; /* Make the movie title stand out */
+    margin: 0; /* Remove any default margin */
+}
+
+/* Optional: Hover effect to make it interactive */
+.movieFound:hover {
+    transform: translateY(-5px); /* Slight lift effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+}
+

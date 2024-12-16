@@ -56,7 +56,7 @@ button:hover {
 
 
 #search-results {
-    display: block;
+    display: flex;
     flex-direction: row;
     align-items: center;
     margin-top: 30px;

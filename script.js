@@ -77,22 +77,38 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchQuery(title) {
         const apiKey = "d08ce4be";
         const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
-
+    
         outputContainer1.style.visibility = "visible";
-
+    
         try {
             const response = await fetch(apiUrl);
-
+    
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
-
+    
             const data = await response.json();
-
+    
             if (data.Response === "True") {
-                movieImage.setAttribute("src", data.Poster);
-                movieText.textContent = `${data.Title} - ${data.Year}`;
+                // Add the movie to the array
                 addPeliculaToArray(data);
+    
+                // Find the movie in the array by its IMDb ID
+                const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
+    
+                // Update the movie image and text
+                const movieFoundDiv = outputContainer1.querySelector(".movieFound");
+                const movieImage = document.createElement("img");
+                movieImage.setAttribute("src", data.Poster);
+                movieImage.setAttribute("alt", `${data.Title} Poster`);
+                movieImage.onclick = () => showMovieInfo(pelicula); // Pass the found movie object to the function
+    
+                const textElement = document.createElement("p");
+                textElement.textContent = `${data.Title} - ${data.Year}`;
+    
+                movieFoundDiv.innerHTML = '';
+                movieFoundDiv.appendChild(movieImage);
+                movieFoundDiv.appendChild(textElement);
             } else {
                 outputContainer1.textContent = `Error: ${data.Error}`;
             }
@@ -100,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             outputContainer1.textContent = `An error occurred: ${error.message}`;
         }
     }
+    
 
 
     function xhrQuery(title) {
@@ -115,13 +132,25 @@ document.addEventListener("DOMContentLoaded", () => {
             if (xhr.status === 200) {
                 const data = JSON.parse(xhr.responseText);
                 if (data.Response === "True") {
-                    // Fetch the poster image as a binary blob
-                    fetchPosterImage(data.Poster, function (blobUrl) {
-                        movieImage.setAttribute("src", blobUrl);
-                    });
-    
-                    movieText.textContent = `${data.Title} - ${data.Year}`;
+                    // Add the movie to the array
                     addPeliculaToArray(data);
+    
+                    // Find the movie in the array by its IMDb ID
+                    const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
+    
+                    // Update the movie image and text
+                    const movieFoundDiv = outputContainer1.querySelector(".movieFound");
+                    const movieImage = document.createElement("img");
+                    movieImage.setAttribute("src", data.Poster);
+                    movieImage.setAttribute("alt", `${data.Title} Poster`);
+                    movieImage.onclick = () => showMovieInfo(pelicula); // Pass the found movie object to the function
+    
+                    const textElement = document.createElement("p");
+                    textElement.textContent = `${data.Title} - ${data.Year}`;
+    
+                    movieFoundDiv.innerHTML = '';
+                    movieFoundDiv.appendChild(movieImage);
+                    movieFoundDiv.appendChild(textElement);
                 } else {
                     outputContainer1.textContent = `Error: ${data.Error}`;
                 }
@@ -136,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
         xhr.send();
     }
+    
     
     function fetchPosterImage(url, callback) {
         const xhr = new XMLHttpRequest();
@@ -183,23 +213,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
             results.forEach((data, index) => {
                 if (data.Response === "True") {
+                    // Add the movie to the array
+                    addPeliculaToArray(data);
+                
+                    // Find the movie in the array by its IMDb ID
+                    const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
+                
                     const movieFoundDiv = arrayContainer[index].querySelector(".movieFound");
-
+                
                     const movieImage = document.createElement("img");
                     movieImage.setAttribute("src", data.Poster);
                     movieImage.setAttribute("alt", `${data.Title} Poster`);
-
+                    movieImage.onclick = () => showMovieInfo(pelicula); // Pass the found movie object to the function
+                
                     const textElement = document.createElement("p");
                     textElement.textContent = `${data.Title} - ${data.Year}`;
-
+                
                     movieFoundDiv.innerHTML = '';
                     movieFoundDiv.appendChild(movieImage);
                     movieFoundDiv.appendChild(textElement);
                     resultsContainer.style.display = "flex";
-                    addPeliculaToArray(data);
                 } else {
                     console.log(`Error for ${titles[index]}: ${data.Error}`);
                 }
+                
             });
         } catch (error) {
             console.error("An error occurred while fetching multiple queries:", error);
@@ -210,9 +247,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function fetchMultipleQueriesXHR(titles) {
         const apiKey = "d08ce4be";
         let arrayContainer = [outputContainer1, outputContainer2, outputContainer3];
+    
+        // Make all containers visible
         outputContainer1.style.visibility = "visible";
         outputContainer2.style.visibility = "visible";
         outputContainer3.style.visibility = "visible";
+    
         titles.forEach((title, index) => {
             const apiUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=${apiKey}`;
             const xhr = new XMLHttpRequest();
@@ -222,7 +262,14 @@ document.addEventListener("DOMContentLoaded", () => {
             xhr.onload = function () {
                 if (xhr.status === 200) {
                     const data = xhr.response;
+    
                     if (data.Response === "True") {
+                        // Add the movie to the array
+                        addPeliculaToArray(data);
+    
+                        // Find the movie in the array by its IMDb ID
+                        const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
+    
                         const movieFoundDiv = arrayContainer[index].querySelector(".movieFound");
     
                         // Fetch the poster image as a binary blob
@@ -231,6 +278,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             movieImage.setAttribute("src", blobUrl);
                             movieImage.setAttribute("alt", `${data.Title} Poster`);
     
+                            // Attach onclick event to show movie info
+                            movieImage.onclick = () => showMovieInfo(pelicula);
+    
                             const textElement = document.createElement("p");
                             textElement.textContent = `${data.Title} - ${data.Year}`;
     
@@ -238,7 +288,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             movieFoundDiv.appendChild(movieImage);
                             movieFoundDiv.appendChild(textElement);
                             resultsContainer.style.display = "flex";
-                            addPeliculaToArray(data);
                         });
                     } else {
                         console.log(`Error for ${title}: ${data.Error}`);
@@ -255,15 +304,30 @@ document.addEventListener("DOMContentLoaded", () => {
             xhr.send();
         });
     }
+    
 
    function addPeliculaToArray(data) {
-        let pelicula = new Pelicula(data.imdbID, data.Title, data.Runtime, data.Year, data.Genre, data.Director, data.Plot, data.Country, data.imbdRating);
+        let pelicula = new Pelicula(data.imdbID, data.Title, data.Runtime, data.Year, data.Genre, data.Director, data.Plot, data.Country, data.imdbRating);
 
         if (!arrayPelicules.find(peliArray => peliArray.id === pelicula.id)) {
             arrayPelicules.push(pelicula);
             console.log(pelicula)
         }
     }
+
+    function showMovieInfo(movie) {
+        const movieDescription = document.getElementById("movieDescription");
+        movieDescription.innerHTML = `
+            <h3>${movie.title} (${movie.year})</h3>
+            <p><strong>Genre:</strong> ${movie.genre}</p>
+            <p><strong>Director:</strong> ${movie.director}</p>
+            <p><strong>Plot:</strong> ${movie.plot}</p>
+            <p><strong>IMDB Rating:</strong> ${movie.imdbRating}</p>
+            <p><strong>Country:</strong> ${movie.country}</p>
+        `;
+        movieDescription.style.display = "block"; // Ensure the description is visible
+    }
+    
 
 
 

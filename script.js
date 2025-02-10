@@ -90,18 +90,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
     
             if (data.Response === "True") {
-                // Add the movie to the array
+                
                 addPeliculaToArray(data);
     
-                // Find the movie in the array by its IMDb ID
+                
                 const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
     
-                // Update the movie image and text
+                
                 const movieFoundDiv = outputContainer1.querySelector(".movieFound");
                 const movieImage = document.createElement("img");
                 movieImage.setAttribute("src", data.Poster);
                 movieImage.setAttribute("alt", `${data.Title} Poster`);
-                movieImage.onclick = () => showMovieInfo(pelicula); // Pass the found movie object to the function
+                movieImage.onclick = () => showMovieInfo(pelicula); 
     
                 const textElement = document.createElement("p");
                 textElement.textContent = `${data.Title} - ${data.Year}`;
@@ -132,18 +132,18 @@ document.addEventListener("DOMContentLoaded", () => {
             if (xhr.status === 200) {
                 const data = JSON.parse(xhr.responseText);
                 if (data.Response === "True") {
-                    // Add the movie to the array
+                    
                     addPeliculaToArray(data);
     
-                    // Find the movie in the array by its IMDb ID
+                    
                     const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
     
-                    // Update the movie image and text
+                    
                     const movieFoundDiv = outputContainer1.querySelector(".movieFound");
                     const movieImage = document.createElement("img");
                     movieImage.setAttribute("src", data.Poster);
                     movieImage.setAttribute("alt", `${data.Title} Poster`);
-                    movieImage.onclick = () => showMovieInfo(pelicula); // Pass the found movie object to the function
+                    movieImage.onclick = () => showMovieInfo(pelicula); 
     
                     const textElement = document.createElement("p");
                     textElement.textContent = `${data.Title} - ${data.Year}`;
@@ -170,16 +170,16 @@ document.addEventListener("DOMContentLoaded", () => {
     function fetchPosterImage(url, callback) {
         const xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
-        xhr.responseType = "blob"; // Set response type to blob for binary data
+        xhr.responseType = "blob"; 
     
         xhr.onload = function () {
             if (xhr.status === 200) {
-                // Convert blob to a URL and pass it to the callback
+                
                 const blobUrl = URL.createObjectURL(xhr.response);
                 callback(blobUrl);
             } else {
                 console.error("Error fetching the poster image.");
-                callback(""); // Provide an empty fallback
+                callback(""); 
             }
         };
     
@@ -213,10 +213,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             results.forEach((data, index) => {
                 if (data.Response === "True") {
-                    // Add the movie to the array
+                    
                     addPeliculaToArray(data);
                 
-                    // Find the movie in the array by its IMDb ID
+                    
                     const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
                 
                     const movieFoundDiv = arrayContainer[index].querySelector(".movieFound");
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const movieImage = document.createElement("img");
                     movieImage.setAttribute("src", data.Poster);
                     movieImage.setAttribute("alt", `${data.Title} Poster`);
-                    movieImage.onclick = () => showMovieInfo(pelicula); // Pass the found movie object to the function
+                    movieImage.onclick = () => showMovieInfo(pelicula); 
                 
                     const textElement = document.createElement("p");
                     textElement.textContent = `${data.Title} - ${data.Year}`;
@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const apiKey = "d08ce4be";
         let arrayContainer = [outputContainer1, outputContainer2, outputContainer3];
     
-        // Make all containers visible
+        
         outputContainer1.style.visibility = "visible";
         outputContainer2.style.visibility = "visible";
         outputContainer3.style.visibility = "visible";
@@ -264,21 +264,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     const data = xhr.response;
     
                     if (data.Response === "True") {
-                        // Add the movie to the array
+                        
                         addPeliculaToArray(data);
     
-                        // Find the movie in the array by its IMDb ID
+                        
                         const pelicula = arrayPelicules.find(peli => peli.id === data.imdbID);
     
                         const movieFoundDiv = arrayContainer[index].querySelector(".movieFound");
     
-                        // Fetch the poster image as a binary blob
+                        
                         fetchPosterImage(data.Poster, function (blobUrl) {
                             const movieImage = document.createElement("img");
                             movieImage.setAttribute("src", blobUrl);
                             movieImage.setAttribute("alt", `${data.Title} Poster`);
     
-                            // Attach onclick event to show movie info
+                            
                             movieImage.onclick = () => showMovieInfo(pelicula);
     
                             const textElement = document.createElement("p");
@@ -325,7 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p><strong>IMDB Rating:</strong> ${movie.imdbRating}</p>
             <p><strong>Country:</strong> ${movie.country}</p>
         `;
-        movieDescription.style.display = "block"; // Ensure the description is visible
+        movieDescription.style.display = "block"; 
     }
     
 
